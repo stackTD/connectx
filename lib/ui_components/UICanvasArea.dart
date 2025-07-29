@@ -34,6 +34,7 @@ import 'package:flutter/services.dart';
 import '../SmartWidgets/gauges/smart_gauge1.dart';
 import '../SmartWidgets/gauges/smart_thermo1.dart';
 import '../SmartWidgets/fan/smart_fan1.dart';
+import '../core/constants/app_constants.dart';
 
 class UICanvasArea extends StatefulWidget {
   final SelectionStore selectionStore;
@@ -61,20 +62,16 @@ class _UICanvasAreaState extends State<UICanvasArea> {
   List<Map<String, dynamic>> _canvasObjectStateList = []; // Object's properties
   int? _canvasSelectedObjectIndex;
   late CanvasItemStateManager _canvasItemStateManager;
-  Color shapecolor = Color.fromARGB(0, 163, 188, 199);
+  Color shapecolor = Color(AppConstants.defaultShapeColorValue);
   final logStore = LogStore();
   late final ConnectorStore connectorStore;
   List<Widget> rectangles = [];
-  double _scale = 1.0;
-  double _minScale = 0.5;
-  double _maxScale = 3.0;
-  static const String TYPE_TEXTBOX = 'TextBox';
+  double _scale = AppConstants.defaultScale;
+  double _minScale = AppConstants.minScale;
+  double _maxScale = AppConstants.maxScale;
   bool _hasShownWelcomeDialog = false;
-  static const String TYPE_DATABOX = 'DataBox';
-  static const String TYPE_DATABOX2 = 'DataBox2';
-  static const String TYPE_DATABOX3 = 'DataBox3';
 
-  String _canvasTitle = "Canvas";
+  String _canvasTitle = AppConstants.defaultCanvasTitle;
   final FocusNode _focusNode = FocusNode();
   Offset? _selectionStart;
   Offset? _selectionEnd;
@@ -455,7 +452,7 @@ class _UICanvasAreaState extends State<UICanvasArea> {
   }
 
   Widget _createShapeWidgetFromType(String? type) {
-    if (type == TYPE_TEXTBOX) {
+    if (type == AppConstants.typeTextBox) {
       return TextBoxWidget(
         // selectionStore: widget.selectionStore,
         initialText: _canvasObjectStateList[_items.length - 1]['text'] ?? '',
@@ -517,7 +514,7 @@ class _UICanvasAreaState extends State<UICanvasArea> {
       return DraggableSmartFan();
     }
 
-    if (type == TYPE_DATABOX) {
+    if (type == AppConstants.typeDataBox) {
       final configStore = DataBoxConfigStore();
       dataBoxConfigStores[_items.length] = configStore;
       return DataBoxWidget(
@@ -528,7 +525,7 @@ class _UICanvasAreaState extends State<UICanvasArea> {
       );
     }
 
-    if (type == TYPE_DATABOX2) {
+    if (type == AppConstants.typeDataBox2) {
       final configStore = DataBoxConfigStore();
       dataBoxConfigStores[_items.length] = configStore;
       return DataBoxWidget2(
@@ -539,7 +536,7 @@ class _UICanvasAreaState extends State<UICanvasArea> {
       );
     }
 
-    if (type == TYPE_DATABOX3) {
+    if (type == AppConstants.typeDataBox3) {
       final configStore = DataBoxConfigStore();
       dataBoxConfigStores[_items.length] = configStore;
       return DataBoxWidget3(
@@ -725,7 +722,7 @@ class _UICanvasAreaState extends State<UICanvasArea> {
                         Widget itemWidget;
                         String widgetType = 'Unknown';
 
-                        if (draggedItem == TYPE_TEXTBOX) {
+                        if (draggedItem == AppConstants.typeTextBox) {
                           itemWidget = TextBoxWidget(
                             initialText: '',
                             // selectionStore: widget.selectionStore,
@@ -737,7 +734,7 @@ class _UICanvasAreaState extends State<UICanvasArea> {
                               }
                             },
                           );
-                          widgetType = TYPE_TEXTBOX;
+                          widgetType = AppConstants.typeTextBox;
 
                           /// TODO@TD: Remove/change the hard coded values like color, size etc so they can be loaded from prefs/properties
                           // Handle different types of dragged items
@@ -820,7 +817,7 @@ class _UICanvasAreaState extends State<UICanvasArea> {
                             shape: draggedItem.shape,
                             color: shapecolor,
                           );
-                        } else if (draggedItem == TYPE_DATABOX) {
+                        } else if (draggedItem == AppConstants.typeDataBox) {
                           final configStore = DataBoxConfigStore();
                           dataBoxConfigStores[_items.length] = configStore;
                           itemWidget = DataBoxWidget(
@@ -830,8 +827,8 @@ class _UICanvasAreaState extends State<UICanvasArea> {
                             configStore: configStore,
                             color: const Color.fromARGB(255, 220, 171, 171),
                           );
-                          widgetType = TYPE_DATABOX;
-                        } else if (draggedItem == TYPE_DATABOX2) {
+                          widgetType = AppConstants.typeDataBox;
+                        } else if (draggedItem == AppConstants.typeDataBox2) {
                           final configStore = DataBoxConfigStore();
                           dataBoxConfigStores[_items.length] = configStore;
                           itemWidget = DataBoxWidget2(
@@ -841,8 +838,8 @@ class _UICanvasAreaState extends State<UICanvasArea> {
                             configStore: configStore,
                             // color: const Color.fromARGB(255, 186, 199, 219),
                           );
-                          widgetType = TYPE_DATABOX2;
-                        } else if (draggedItem == TYPE_DATABOX3) {
+                          widgetType = AppConstants.typeDataBox2;
+                        } else if (draggedItem == AppConstants.typeDataBox3) {
                           final configStore = DataBoxConfigStore();
                           dataBoxConfigStores[_items.length] = configStore;
                           itemWidget = DataBoxWidget3(
@@ -852,7 +849,7 @@ class _UICanvasAreaState extends State<UICanvasArea> {
                             configStore: configStore,
                             // color: const Color.fromARGB(255, 186, 199, 219),
                           );
-                          widgetType = TYPE_DATABOX3;
+                          widgetType = AppConstants.typeDataBox3;
                         } else {
                           return; // Invalid item type
                         }
@@ -862,7 +859,7 @@ class _UICanvasAreaState extends State<UICanvasArea> {
                               CanvasCommonItemProperties(
                             name: 'Item ${_items.length}',
                             description: 'Item ${_items.length}',
-                            text: widgetType == TYPE_TEXTBOX
+                            text: widgetType == AppConstants.typeTextBox
                                 ? 'Enter text'
                                 : '', // EDIT HERE
                             initialLeft: details.offset.dx - 160,
@@ -872,7 +869,7 @@ class _UICanvasAreaState extends State<UICanvasArea> {
                             angle: 0,
                             // shapecolor: shapecolor,
                             widgetType: widgetType, // Add this
-                            // text: widgetType == TYPE_TEXTBOX
+                            // text: widgetType == AppConstants.typeTextBox
                             //     ? 'Enter text'
                             //     : null, // Add this
                             type: draggedItem is ShapeWidget
@@ -916,12 +913,12 @@ class _UICanvasAreaState extends State<UICanvasArea> {
                           'type': widgetType,
                           'widgetType': widgetType,
                           'angle': 0.0,
-                          // 'text': widgetType == TYPE_TEXTBOX ? 'Enter text' : '',
+                          // 'text': widgetType == AppConstants.typeTextBox ? 'Enter text' : '',
                           'imagePath': imagePath,
                           'imageType': imageType,
                           'name': 'Item ${_items.length}',
                           'description': 'Item ${_items.length}',
-                          'text': widgetType == TYPE_TEXTBOX
+                          'text': widgetType == AppConstants.typeTextBox
                               ? 'Enter text'
                               : '', //EDIT HERE
                           'deviceName': '', // Add default empty string

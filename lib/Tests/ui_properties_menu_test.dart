@@ -47,7 +47,7 @@ void main() {
 
       // Build widget
       await tester.pumpWidget(MaterialApp(
-        home: UIPropetiesMenu(
+        home: UIPropertiesMenu(
           selectionStore: selectionStore,
         ),
       ));
