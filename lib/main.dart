@@ -20,6 +20,8 @@ import 'core/state/app_state_manager.dart';
 import 'core/services/theme_service.dart';
 import 'core/services/error_service.dart';
 import 'core/widgets/error_boundary.dart';
+import 'core/services/performance_service.dart';
+import 'core/services/memory_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
