@@ -5,32 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import '../components/drawing_area/selection_store.dart';
+import '../core/constants/app_constants.dart';
 
-class UIPropetiesMenu extends StatefulWidget {
+class UIPropertiesMenu extends StatefulWidget {
   final SelectionStore selectionStore;
-  UIPropetiesMenu({Key? key, required this.selectionStore}) : super(key: key);
+  UIPropertiesMenu({Key? key, required this.selectionStore}) : super(key: key);
 
   @override
-  _UIPropetiesMenuState createState() => _UIPropetiesMenuState();
+  _UIPropertiesMenuState createState() => _UIPropertiesMenuState();
 }
 
-class _UIPropetiesMenuState extends State<UIPropetiesMenu> {
+class _UIPropertiesMenuState extends State<UIPropertiesMenu> {
   final Map<String, TextEditingController> _controllers = {};
   Color _selectedColor = Colors.white; // Default color
-  final List<String> readOnlyFields = [
-    'text',
-    'widgetType',
-    'type',
-    'imagePath'
-  ];
-  // These properties are kept hidden from the user
-  final List<String> hiddenProperties = [
-    'text',
-    'widgetType',
-    'type',
-    'imagePath',
-    'index',
-  ];
 
   List<String> devices = [];
   List<String> groups = [];
@@ -95,7 +82,7 @@ class _UIPropetiesMenuState extends State<UIPropetiesMenu> {
                     children: [
                       ...selectedItem.entries
                           .where(
-                              (entry) => !hiddenProperties.contains(entry.key))
+                              (entry) => !AppConstants.hiddenProperties.contains(entry.key))
                           .map(
                         (entry) {
                           if (entry.key == 'color') {
@@ -292,7 +279,7 @@ class _UIPropetiesMenuState extends State<UIPropetiesMenu> {
                                           255, 255, 255, 255),
                                       borderRadius: BorderRadius.circular(4.0),
                                     ),
-                                    child: readOnlyFields.contains(entry.key)
+                                    child: AppConstants.readOnlyFields.contains(entry.key)
                                         ? Text(
                                             _controllers[entry.key]?.text ?? '',
                                             style: const TextStyle(
