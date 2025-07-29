@@ -1,0 +1,23 @@
+
+### 1. **`shape_type.dart`**
+   - **Purpose:** This file defines the `ShapeType` enum, which represents the various types of shapes (triangle, square, circle, rectangle) used throughout the application. By isolating the enum, it can be easily referenced and extended as needed across different files.
+
+### 2. **`shape.dart`**
+   - **Purpose:** This file contains the `Shape` model class, which stores details about each shape, including its type, position (x, y), and dimensions (width, height). This model can be used to create instances of different shapes and manage their properties consistently.
+
+### 3. **`shape_painter.dart`**
+   - **Purpose:** The `ShapePainter` class in this file is a custom painter responsible for drawing the various shapes on the canvas. It uses the `ShapeType` enum to determine which shape to draw and paints it accordingly on the provided `Canvas` within the specified `Size`.
+
+### 4. **`shape_widget.dart`**
+   - **Purpose:** This file defines the `ShapeWidget` class, a widget that uses the `ShapePainter` to render a shape on the screen. It wraps the custom painter in a `CustomPaint` widget, making it easy to include different shapes in the user interface.
+
+### 5. **`draggable_shape.dart`**
+   - **Purpose:** The `DraggableShape` class in this file provides a widget that allows the shapes to be draggable within the user interface. It uses the `ShapeWidget` to render the shape and enables dragging functionality, with feedback displayed during the drag operation. This class makes the shapes interactive and ready for user manipulation.
+
+### 6. **`second_column2.dart`**
+   - **Purpose:** This is the main widget for the "Second Column" in your layout. It organizes the draggable shapes into a grid layout within a container. The file pulls together all the other components (`DraggableShape`, `ShapeType`) to create a user interface where shapes can be selected and moved by the user. This file acts as a central point that integrates the various shape-related functionalities.
+
+### **Summary**
+- **Separation of Concerns:** Each file serves a specific purpose, ensuring that related code is grouped together and making the application easier to understand, maintain, and extend.
+- **Reusability:** By separating the code into different files, you can reuse components like `ShapePainter` or `ShapeWidget` in other parts of the application without duplicating code.
+- **Scalability:** This structure allows for easier scaling, such as adding new shapes, adjusting UI components, or modifying the behavior of existing features without disrupting the entire codebase.

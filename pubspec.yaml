@@ -1,0 +1,86 @@
+name: Sl_SCADA_ConnectX
+description: "A new Flutter project."
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_mobx: ^2.0.6+4
+  mobx: ^2.0.6
+  provider: ^6.0.3
+  shared_preferences: ^2.0.9
+  flutter_colorpicker: ^1.0.3
+  flutter_svg: ^1.0.0
+  xml: ^6.0.0
+  path_provider: ^2.0.11
+  intl: ^0.18.1
+  file_picker: ^5.0.1
+ 
+
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.3.3
+  mobx_codegen: ^2.0.5
+
+  flutter_lints: ^3.0.0
+
+flutter:
+
+  uses-material-design: true
+  assets:
+    - assets/image1.png
+    - assets/image2.jpg
+    - assets/image3.png
+    - assets/image4.png
+    - assets/image5.png
+    - assets/image6.png
+    - assets/image7.png
+    - assets/image8.png
+    - assets/image9.png
+    - assets/image10.png
+    - assets/image11.png
+    - assets/image12.png
+    - assets/image13.png
+    - assets/image14.png
+    - assets/image15.png
+    - assets/image16.png
+    - assets/image17.png
+    - assets/image18.png
+    - assets/image19.png
+    - assets/image20.png
+    - assets/image21.png
+    - assets/image22.png
+    - assets/image23.png
+    - assets/image24.jpg
+    - assets/image25.jpg
+    - assets/image26.jpg
+    - assets/image27.jpg
+    - assets/image28.jpg
+    - assets/image29.jpg
+    - assets/image30.jpg
+    - assets/image31.jpg
+    - assets/image32.jpg
+    - assets/image33.jpg
+    - assets/image34.jpg
+    - assets/image35.jpg
+    - assets/image36.avif
+    - assets/image37.avif
+    - assets/image38.avif
+    - assets/image39.jpg
+    - assets/image40.jpg
+    - assets/image41.svg
+
+
+
+
+    
+    - assets/icon.svg

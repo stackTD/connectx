@@ -1,0 +1,70 @@
+{
+  "Connector": {
+    "device_name": "Connector",
+    "device_description": "connection test",
+    "make": "General",
+    "com_driver": "Modbus TCP",
+    "host_ip": "127.0.0.1",
+    "port_number": 502,
+    "station_number": 55,
+    "Groups": {
+      "Sensors": {
+        "Tags": {
+          "Temprature": {
+            "Name": "Temprature",
+            "DataType": "String",
+            "R_address": "D10"
+          },
+          "Moisture": {
+            "Name": "Moisture",
+            "DataType": "String",
+            "R_address": "D20"
+          },
+          "Pressure": {
+            "Name": "Pressure",
+            "DataType": "String",
+            "R_address": "D30"
+          },
+          "Test1": {
+            "Name": "Test1",
+            "DataType": "Integer",
+            "R_address": "D40"
+          },
+          "Test2": {
+            "Name": "Test2",
+            "DataType": "Integer",
+            "R_address": "D50"
+          },
+          "Test3": {
+            "Name": "Test3",
+            "DataType": "Integer",
+            "R_address": "D60"
+          },
+          "Test4": {
+            "Name": "Test4",
+            "DataType": "Integer",
+            "R_address": "D70"
+          }
+        }
+      }
+    }
+  },
+  "502": {
+    "device_name": "502",
+    "device_description": "test",
+    "make": "General",
+    "com_driver": "Modbus TCP",
+    "host_ip": "127.0.0.1",
+    "port_number": 502,
+    "station_number": 53
+  },
+  "Modbus test": {
+    "device_name": "Modbus test",
+    "device_description": "testing the new configuratiom",
+    "make": "General",
+    "com_driver": "Modbus TCP",
+    "host_ip": "127.0.0.1",
+    "port_number": 502,
+    "station_number": 55
+  }
+}
