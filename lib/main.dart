@@ -15,25 +15,34 @@ import './components/settings/group_form.dart';
 import './components/connector_store.dart';
 import './components/settings/log_store.dart';
 import './Alarm/alarmsObjectTray.dart';
-import 'ui_components/ThemeManager.dart';
 import 'core/constants/app_constants.dart';
 import 'core/state/app_state_manager.dart';
+import 'core/services/theme_service.dart';
+import 'core/services/error_service.dart';
+import 'core/widgets/error_boundary.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize services
+  final themeService = ThemeService();
+  final errorService = ErrorService();
+  
+  // Initialize stores
   final logStore = LogStore();
   final connectorStore = ConnectorStore(logStore);
   final selectionStore = SelectionStore();
   final appStateManager = AppStateManager();
 
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeManager(),
+    ChangeNotifierProvider.value(
+      value: themeService,
       child: PieEditor(
         connectorStore: connectorStore,
         selectionStore: selectionStore,
         logStore: logStore,
         appStateManager: appStateManager,
+        errorService: errorService,
       ),
     ),
   );
@@ -44,6 +53,7 @@ class PieEditor extends StatefulWidget {
   final SelectionStore selectionStore;
   final LogStore logStore;
   final AppStateManager appStateManager;
+  final ErrorService errorService;
 
   static PieEditorState? of(BuildContext context) =>
       context.findAncestorStateOfType<PieEditorState>();
@@ -54,6 +64,7 @@ class PieEditor extends StatefulWidget {
     required this.selectionStore,
     required this.logStore,
     required this.appStateManager,
+    required this.errorService,
   }) : super(key: key);
 
   @override
@@ -66,48 +77,50 @@ class PieEditorState extends State<PieEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeManager>(
-      builder: (context, themeManager, _) {
+    return Consumer<ThemeService>(
+      builder: (context, themeService, _) {
         return MaterialApp(
           title: AppConstants.appTitle,
-          theme: ThemeData.light().copyWith(
-            scaffoldBackgroundColor: Colors.white,
-            // Add other light theme customizations
-          ),
-          darkTheme: ThemeData.dark().copyWith(
-            scaffoldBackgroundColor: const Color.fromARGB(218, 0, 0, 0),
-            // Add other dark theme customizations
-          ),
-          themeMode: themeManager.themeMode,
-          home: Observer(
-            builder: (_) => Scaffold(
-              body: Column(
-                children: [
-                  // Header Bar
-                  UIHeaderBar(),
-                  // Main content area
-                  Expanded(
-                    child: Row(
-                      children: [
-                        // UIMasterSideMenu Column with buttons
-                        UIMasterSideMenu(
-                          onButtonPressed: widget.appStateManager.toggleColumn,
-                        ),
-                        // Conditional rendering based on app state
-                        if (widget.appStateManager.showSecondColumn1) ...[
-                          _buildSettingsSection(),
-                        ] else if (widget.appStateManager.showAlarms) ...[
-                          Expanded(
-                            child: AlarmObjectTray(),
+          theme: themeService.lightTheme,
+          darkTheme: themeService.darkTheme,
+          themeMode: themeService.themeMode,
+          home: ErrorBoundary(
+            errorTitle: 'Application Error',
+            errorMessage: 'The SCADA ConnectX application encountered an error. Please try restarting.',
+            child: Observer(
+              builder: (_) => Scaffold(
+                body: Column(
+                  children: [
+                    // Header Bar
+                    UIHeaderBar(),
+                    // Main content area
+                    Expanded(
+                      child: Row(
+                        children: [
+                          // UIMasterSideMenu Column with buttons
+                          UIMasterSideMenu(
+                            onButtonPressed: widget.appStateManager.toggleColumn,
                           ),
-                        ] else ...[
-                          ..._buildMainWorkspaceSection(),
+                          // Conditional rendering based on app state
+                          if (widget.appStateManager.showSecondColumn1) ...[
+                            _buildSettingsSection(),
+                          ] else if (widget.appStateManager.showAlarms) ...[
+                            Expanded(
+                              child: ErrorBoundary(
+                                errorTitle: 'Alarms Error',
+                                errorMessage: 'There was an error loading the alarms panel.',
+                                child: AlarmObjectTray(),
+                              ),
+                            ),
+                          ] else ...[
+                            ..._buildMainWorkspaceSection(),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
-                  ),
-                  UIStatusBar(statusNotifier: statusNotifier)
-                ],
+                    UIStatusBar(statusNotifier: statusNotifier)
+                  ],
+                ),
               ),
             ),
           ),
@@ -118,32 +131,36 @@ class PieEditorState extends State<PieEditor> {
 
   /// Builds the settings section with forms
   Widget _buildSettingsSection() {
-    return Expanded(
-      child: Row(
-        children: [
-          UiSettingsOption(
-            hasSettingsBeenOpened: widget.appStateManager.showSecondColumn1,
-            showAddForm: widget.appStateManager.showAddForm,
-            showAddGroupForm: widget.appStateManager.showAddGroupForm,
-            connectorStore: widget.connectorStore,
-            logStore: widget.logStore,
-          ),
-          if (widget.appStateManager.showAddDeviceForm)
-            Expanded(
-              child: AddDeviceForm(
-                onSave: widget.appStateManager.closeForm,
-                onCancel: widget.appStateManager.closeForm,
-              ),
+    return ErrorBoundary(
+      errorTitle: 'Settings Error',
+      errorMessage: 'There was an error loading the settings panel.',
+      child: Expanded(
+        child: Row(
+          children: [
+            UiSettingsOption(
+              hasSettingsBeenOpened: widget.appStateManager.showSecondColumn1,
+              showAddForm: widget.appStateManager.showAddForm,
+              showAddGroupForm: widget.appStateManager.showAddGroupForm,
+              connectorStore: widget.connectorStore,
+              logStore: widget.logStore,
             ),
-          if (widget.appStateManager.showGroupForm)
-            Expanded(
-              child: GroupForm(
-                onSave: widget.appStateManager.closeGroupForm,
-                onCancel: widget.appStateManager.closeGroupForm,
-                deviceName: widget.appStateManager.selectedDeviceName!,
+            if (widget.appStateManager.showAddDeviceForm)
+              Expanded(
+                child: AddDeviceForm(
+                  onSave: widget.appStateManager.closeForm,
+                  onCancel: widget.appStateManager.closeForm,
+                ),
               ),
-            ),
-        ],
+            if (widget.appStateManager.showGroupForm)
+              Expanded(
+                child: GroupForm(
+                  onSave: widget.appStateManager.closeGroupForm,
+                  onCancel: widget.appStateManager.closeGroupForm,
+                  deviceName: widget.appStateManager.selectedDeviceName!,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -151,21 +168,33 @@ class PieEditorState extends State<PieEditor> {
   /// Builds the main workspace section with canvas and properties
   List<Widget> _buildMainWorkspaceSection() {
     return [
-      UIObjectDrawer(
-        connectorStore: widget.connectorStore,
-        selectionStore: widget.selectionStore,
-      ),
-      Expanded(
-        child: UICanvasArea(
-          selectionStore: widget.selectionStore,
+      ErrorBoundary(
+        errorTitle: 'Object Drawer Error',
+        errorMessage: 'There was an error loading the object drawer.',
+        child: UIObjectDrawer(
           connectorStore: widget.connectorStore,
-          hasSettingsBeenOpened: widget.appStateManager.hasSettingsBeenOpened,
-          hasAlarmsBeenOpened: widget.appStateManager.hasAlarmsBeenOpened,
-          statusNotifier: statusNotifier,
+          selectionStore: widget.selectionStore,
         ),
       ),
-      UIPropertiesMenu(
-        selectionStore: widget.selectionStore,
+      Expanded(
+        child: ErrorBoundary(
+          errorTitle: 'Canvas Error',
+          errorMessage: 'There was an error loading the canvas area.',
+          child: UICanvasArea(
+            selectionStore: widget.selectionStore,
+            connectorStore: widget.connectorStore,
+            hasSettingsBeenOpened: widget.appStateManager.hasSettingsBeenOpened,
+            hasAlarmsBeenOpened: widget.appStateManager.hasAlarmsBeenOpened,
+            statusNotifier: statusNotifier,
+          ),
+        ),
+      ),
+      ErrorBoundary(
+        errorTitle: 'Properties Error',
+        errorMessage: 'There was an error loading the properties panel.',
+        child: UIPropertiesMenu(
+          selectionStore: widget.selectionStore,
+        ),
       ),
     ];
   }
